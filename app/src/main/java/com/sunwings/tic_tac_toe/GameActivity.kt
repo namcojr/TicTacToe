@@ -18,40 +18,60 @@ class GameActivity : AppCompatActivity() {
     private lateinit var tvPlayerTurn: TextView
     private lateinit var btnReset: Button
     private var aiDifficulty: String = "Easy"
+    private var gridSize: Int = 3
     private var currentPlayer = 'X'
     private var gameActive = true
-    private var boardState = Array(3) { CharArray(3) { ' ' } }
+    private lateinit var boardState: Array<CharArray>
     private var aiThinking = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setThemeFromPrefs()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game)
+        val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val gridSizePref = prefs.getString("grid_size", "3x3")
+        gridSize = if (gridSizePref == "4x4") 4 else 3
+        if (gridSize == 4) {
+            setContentView(R.layout.activity_game_4x4)
+        } else {
+            setContentView(R.layout.activity_game)
+        }
 
         tvPlayerTurn = findViewById(R.id.tvPlayerTurn)
         btnReset = findViewById(R.id.btnReset)
-        board = Array(3) { row ->
-            Array(3) { col ->
+        aiDifficulty = prefs.getString("ai_difficulty", "Easy") ?: "Easy"
+        val theme = prefs.getString("theme_color", "default") ?: "default"
+        board = Array(gridSize) { row ->
+            Array(gridSize) { col ->
                 val cellId = resources.getIdentifier("btnCell${row}${col}", "id", packageName)
                 findViewById<ImageView>(cellId)
             }
         }
-        // Read difficulty and theme from SharedPreferences
-        val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        aiDifficulty = prefs.getString("ai_difficulty", "Easy") ?: "Easy"
-        val theme = prefs.getString("theme_color", "default") ?: "default"
+        boardState = Array(gridSize) { CharArray(gridSize) { ' ' } }
         setBoardCardBackgrounds(theme)
         setListeners()
+        updateGridVisibility()
         updateTurnText()
         btnReset.setOnClickListener { resetGame() }
     }
 
+    /**
+     * Show/hide board cells based on grid size (3x3 or 4x4)
+     */
+    private fun updateGridVisibility() {
+        for (row in 0..3) {
+            for (col in 0..3) {
+                val cardId = resources.getIdentifier("card${row}${col}", "id", packageName)
+                val card = findViewById<android.view.View>(cardId)
+                if (row < gridSize && col < gridSize) {
+                    card?.visibility = android.view.View.VISIBLE
+                } else {
+                    card?.visibility = android.view.View.GONE
+                }
+            }
+        }
+    }
+
     private fun setBoardCardBackgrounds(theme: String) {
-        val bgIds = arrayOf(
-            R.id.boardBg00, R.id.boardBg01, R.id.boardBg02,
-            R.id.boardBg10, R.id.boardBg11, R.id.boardBg12,
-            R.id.boardBg20, R.id.boardBg21, R.id.boardBg22
-        )
         val gradientRes = when (theme) {
             "blue" -> R.drawable.bg_gradient_blue
             "green" -> R.drawable.bg_gradient_green
@@ -60,9 +80,12 @@ class GameActivity : AppCompatActivity() {
             "silver" -> R.drawable.bg_gradient_silver
             else -> R.drawable.bg_gradient_default
         }
-        for (id in bgIds) {
-            val bg = findViewById<android.widget.FrameLayout>(id)
-            bg.setBackgroundResource(gradientRes)
+        for (row in 0 until gridSize) {
+            for (col in 0 until gridSize) {
+                val bgId = resources.getIdentifier("boardBg${row}${col}", "id", packageName)
+                val bg = findViewById<android.widget.FrameLayout>(bgId)
+                bg?.setBackgroundResource(gradientRes)
+            }
         }
     }
 
@@ -80,8 +103,8 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        for (row in 0..2) {
-            for (col in 0..2) {
+        for (row in 0 until gridSize) {
+            for (col in 0 until gridSize) {
                 board[row][col].setOnClickListener {
                     onCellClicked(row, col)
                 }
@@ -164,14 +187,14 @@ class GameActivity : AppCompatActivity() {
     // Easy: Random empty cell
     private fun getRandomMove(): Pair<Int, Int>? {
         val empty = mutableListOf<Pair<Int, Int>>()
-        for (row in 0..2) for (col in 0..2) if (boardState[row][col] == ' ') empty.add(Pair(row, col))
+        for (row in 0 until gridSize) for (col in 0 until gridSize) if (boardState[row][col] == ' ') empty.add(Pair(row, col))
         return if (empty.isNotEmpty()) empty.random() else null
     }
 
     // Medium: Win if possible, block if needed, else random
     private fun getMediumMove(): Pair<Int, Int>? {
         // Try to win
-        for (row in 0..2) for (col in 0..2) {
+        for (row in 0 until gridSize) for (col in 0 until gridSize) {
             if (boardState[row][col] == ' ') {
                 boardState[row][col] = 'O'
                 if (checkWinFor('O')) { boardState[row][col] = ' '; return Pair(row, col) }
@@ -179,7 +202,7 @@ class GameActivity : AppCompatActivity() {
             }
         }
         // Try to block X
-        for (row in 0..2) for (col in 0..2) {
+        for (row in 0 until gridSize) for (col in 0 until gridSize) {
             if (boardState[row][col] == ' ') {
                 boardState[row][col] = 'X'
                 if (checkWinFor('X')) { boardState[row][col] = ' '; return Pair(row, col) }
@@ -194,7 +217,7 @@ class GameActivity : AppCompatActivity() {
     private fun getBestMove(): Pair<Int, Int>? {
         var bestScore = Int.MIN_VALUE
         var move: Pair<Int, Int>? = null
-        for (row in 0..2) for (col in 0..2) {
+        for (row in 0 until gridSize) for (col in 0 until gridSize) {
             if (boardState[row][col] == ' ') {
                 boardState[row][col] = 'O'
                 val score = minimax(0, false)
@@ -215,7 +238,7 @@ class GameActivity : AppCompatActivity() {
         if (isDraw()) return 0
         if (isMax) {
             var best = Int.MIN_VALUE
-            for (row in 0..2) for (col in 0..2) {
+            for (row in 0 until gridSize) for (col in 0 until gridSize) {
                 if (boardState[row][col] == ' ') {
                     boardState[row][col] = 'O'
                     best = maxOf(best, minimax(depth + 1, false))
@@ -225,7 +248,7 @@ class GameActivity : AppCompatActivity() {
             return best
         } else {
             var best = Int.MAX_VALUE
-            for (row in 0..2) for (col in 0..2) {
+            for (row in 0 until gridSize) for (col in 0 until gridSize) {
                 if (boardState[row][col] == ' ') {
                     boardState[row][col] = 'X'
                     best = minOf(best, minimax(depth + 1, true))
@@ -238,13 +261,24 @@ class GameActivity : AppCompatActivity() {
 
     // Helper to check win for a specific player
     private fun checkWinFor(player: Char): Boolean {
-        for (i in 0..2) {
-            if (boardState[i][0] == player && boardState[i][1] == player && boardState[i][2] == player) return true
-            if (boardState[0][i] == player && boardState[1][i] == player && boardState[2][i] == player) return true
+        // Check rows and columns
+        for (i in 0 until gridSize) {
+            var rowWin = true
+            var colWin = true
+            for (j in 0 until gridSize) {
+                if (boardState[i][j] != player) rowWin = false
+                if (boardState[j][i] != player) colWin = false
+            }
+            if (rowWin || colWin) return true
         }
-        if (boardState[0][0] == player && boardState[1][1] == player && boardState[2][2] == player) return true
-        if (boardState[0][2] == player && boardState[1][1] == player && boardState[2][0] == player) return true
-        return false
+        // Check diagonals
+        var diag1Win = true
+        var diag2Win = true
+        for (i in 0 until gridSize) {
+            if (boardState[i][i] != player) diag1Win = false
+            if (boardState[i][gridSize - 1 - i] != player) diag2Win = false
+        }
+        return diag1Win || diag2Win
     }
 
     // Save win to SharedPreferences for high score tracking
@@ -264,20 +298,12 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun checkWin(): Boolean {
-        // Check rows and columns
-        for (i in 0..2) {
-            if (boardState[i][0] == currentPlayer && boardState[i][1] == currentPlayer && boardState[i][2] == currentPlayer) return true
-            if (boardState[0][i] == currentPlayer && boardState[1][i] == currentPlayer && boardState[2][i] == currentPlayer) return true
-        }
-        // Check diagonals
-        if (boardState[0][0] == currentPlayer && boardState[1][1] == currentPlayer && boardState[2][2] == currentPlayer) return true
-        if (boardState[0][2] == currentPlayer && boardState[1][1] == currentPlayer && boardState[2][0] == currentPlayer) return true
-        return false
+        return checkWinFor(currentPlayer)
     }
 
     private fun isDraw(): Boolean {
-        for (row in 0..2) {
-            for (col in 0..2) {
+        for (row in 0 until gridSize) {
+            for (col in 0 until gridSize) {
                 if (boardState[row][col] == ' ') return false
             }
         }
@@ -285,8 +311,8 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun resetGame() {
-        for (row in 0..2) {
-            for (col in 0..2) {
+        for (row in 0 until gridSize) {
+            for (col in 0 until gridSize) {
                 boardState[row][col] = ' '
                 board[row][col].setImageDrawable(null)
             }

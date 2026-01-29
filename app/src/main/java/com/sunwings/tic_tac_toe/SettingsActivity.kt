@@ -14,8 +14,10 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+
         val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val savedDifficulty = prefs.getString("ai_difficulty", "Easy")
+        val savedGridSize = prefs.getString("grid_size", "3x3")
 
         val cardDefault = findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardDefault)
         val cardBlue = findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardBlue)
@@ -56,6 +58,23 @@ class SettingsActivity : AppCompatActivity() {
                 else -> "Easy"
             }
             prefs.edit().putString("ai_difficulty", difficulty).apply()
+        }
+
+        // Grid size selection logic
+        val radioGroupGridSize = findViewById<RadioGroup>(R.id.radioGroupGridSize)
+        val gridSizeMap = mapOf(
+            "3x3" to R.id.radioGrid3x3,
+            "4x4" to R.id.radioGrid4x4
+        )
+        gridSizeMap[savedGridSize]?.let { radioGroupGridSize.check(it) }
+
+        radioGroupGridSize.setOnCheckedChangeListener { _, checkedId ->
+            val gridSize = when (checkedId) {
+                R.id.radioGrid3x3 -> "3x3"
+                R.id.radioGrid4x4 -> "4x4"
+                else -> "3x3"
+            }
+            prefs.edit().putString("grid_size", gridSize).apply()
         }
     }
 
