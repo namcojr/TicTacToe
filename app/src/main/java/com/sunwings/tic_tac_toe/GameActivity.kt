@@ -255,7 +255,7 @@ class GameActivity : AppCompatActivity() {
     // Save win to SharedPreferences for high score tracking
     private fun saveWin(player: Char) {
         val prefs = getSharedPreferences("high_scores", MODE_PRIVATE)
-        val key = if (player == 'X') "Human Player Scores" else "Computer Scores"
+        val key = if (player == 'X') "player_x_scores" else "player_o_scores"
         val scores = prefs.getStringSet(key, mutableSetOf())?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
         val newScore = (scores.firstOrNull() ?: 0) + 1
         scores.add(0, newScore)

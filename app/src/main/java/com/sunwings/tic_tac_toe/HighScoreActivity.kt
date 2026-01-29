@@ -48,6 +48,7 @@ class HighScoreActivity : AppCompatActivity() {
         layoutPlayerXScores.removeAllViews()
         layoutPlayerOScores.removeAllViews()
 
+        // Display as "Human Player" and "Computer" scores
         for ((i, score) in xScores.withIndex()) {
             val tv = TextView(this)
             tv.text = "${ordinal(i + 1)}: $score wins"
