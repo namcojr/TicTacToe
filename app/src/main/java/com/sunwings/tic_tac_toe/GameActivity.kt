@@ -125,9 +125,15 @@ class GameActivity : AppCompatActivity() {
     private fun aiMove() {
         if (!gameActive) return
         val move = when (aiDifficulty) {
-            "Easy" -> getRandomMove()
+            "Easy" -> {
+                // 5% chance to play smart on Easy
+                if (gridSize == 3 && Math.random() < 0.05) getBestMove() else getRandomMove()
+            }
             "Medium" -> getMediumMove()
-            "Hard" -> getBestMove()
+            "Hard" -> {
+                // 5% chance to make a random move on Hard (3x3 only)
+                if (gridSize == 3 && Math.random() < 0.05) getRandomMove() else getBestMove()
+            }
             else -> getRandomMove()
         }
         if (move != null) {
@@ -217,10 +223,11 @@ class GameActivity : AppCompatActivity() {
     private fun getBestMove(): Pair<Int, Int>? {
         var bestScore = Int.MIN_VALUE
         var move: Pair<Int, Int>? = null
+        val maxDepth = if (gridSize == 4) 5 else Int.MAX_VALUE // Limit depth for 4x4, unlimited for 3x3
         for (row in 0 until gridSize) for (col in 0 until gridSize) {
             if (boardState[row][col] == ' ') {
                 boardState[row][col] = 'O'
-                val score = minimax(0, false)
+                val score = minimax(0, false, maxDepth)
                 boardState[row][col] = ' '
                 if (score > bestScore) {
                     bestScore = score
@@ -232,16 +239,17 @@ class GameActivity : AppCompatActivity() {
     }
 
     // Minimax algorithm for hard AI
-    private fun minimax(depth: Int, isMax: Boolean): Int {
+    private fun minimax(depth: Int, isMax: Boolean, maxDepth: Int): Int {
         if (checkWinFor('O')) return 10 - depth
         if (checkWinFor('X')) return depth - 10
         if (isDraw()) return 0
+        if (depth >= maxDepth) return 0 // Depth limit reached, treat as draw/neutral
         if (isMax) {
             var best = Int.MIN_VALUE
             for (row in 0 until gridSize) for (col in 0 until gridSize) {
                 if (boardState[row][col] == ' ') {
                     boardState[row][col] = 'O'
-                    best = maxOf(best, minimax(depth + 1, false))
+                    best = maxOf(best, minimax(depth + 1, false, maxDepth))
                     boardState[row][col] = ' '
                 }
             }
@@ -251,7 +259,7 @@ class GameActivity : AppCompatActivity() {
             for (row in 0 until gridSize) for (col in 0 until gridSize) {
                 if (boardState[row][col] == ' ') {
                     boardState[row][col] = 'X'
-                    best = minOf(best, minimax(depth + 1, true))
+                    best = minOf(best, minimax(depth + 1, true, maxDepth))
                     boardState[row][col] = ' '
                 }
             }
