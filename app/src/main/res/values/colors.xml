@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <color name="transparent">#00000000</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+<!-- Theme colors for TicTacToe -->
+<color name="theme_default">#2196F3</color> <!-- Default blue -->
+<color name="theme_dark">#1565C0</color>
+<color name="theme_light">#E3F2FD</color>
+<color name="theme_on">#FFFFFFFF</color>
+
+<color name="theme_blue">#2196F3</color>
+<color name="theme_green">#43A047</color>
+<color name="theme_red">#E53935</color>
+<color name="theme_gold">#FFD700</color>
+<color name="theme_silver">#C0C0C0</color>
+
+<!-- Contrast text for light themes -->
+<color name="theme_on_gold">#FF000000</color> <!-- black text for gold -->
+<color name="theme_on_silver">#FF000000</color> <!-- black text for silver -->
+</resources>

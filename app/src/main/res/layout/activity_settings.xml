@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="?android:windowBackground"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvSettingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Theme Color"
+        android:textSize="33sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
+    <androidx.gridlayout.widget.GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        app:columnCount="3">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDefault"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_margin="8dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_default">
+                <TextView
+                    android:id="@+id/tvDefault"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Default"
+                    android:textColor="#222"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardBlue"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_margin="8dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_blue">
+                <TextView
+                    android:id="@+id/tvBlue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Blue"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardGreen"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_margin="8dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_green">
+                <TextView
+                    android:id="@+id/tvGreen"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Green"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardRed"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_margin="8dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_red">
+                <TextView
+                    android:id="@+id/tvRed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Red"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardGold"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_margin="8dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_gold">
+                <TextView
+                    android:id="@+id/tvGold"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Gold"
+                    android:textColor="#222"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSilver"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_margin="8dp">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_silver">
+                <TextView
+                    android:id="@+id/tvSilver"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Silver"
+                    android:textColor="#222"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.gridlayout.widget.GridLayout>
+
+    <TextView
+        android:id="@+id/tvDifficultyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AI Difficulty"
+        android:textSize="33sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupDifficulty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radioEasy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Easy" />
+        <RadioButton
+            android:id="@+id/radioMedium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Medium" />
+        <RadioButton
+            android:id="@+id/radioHard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Hard" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnMenu"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="MENU"
+        android:layout_marginTop="16dp" />
+
+
+    </LinearLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.TicTacToe" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_default</item>
+        <item name="colorPrimaryVariant">@color/theme_dark</item>
+        <item name="colorOnPrimary">@color/theme_on</item>
+        <item name="colorSecondary">@color/theme_blue</item>
+        <item name="colorSecondaryVariant">@color/theme_dark</item>
+        <item name="colorOnSecondary">@color/theme_on</item>
+        <item name="android:windowBackground">@color/theme_light</item>
+        <item name="android:textColorPrimary">@color/theme_on</item>
+    </style>
+
+    <!-- Blue Theme -->
+    <style name="Theme.TicTacToe.Blue" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_blue</item>
+        <item name="colorPrimaryVariant">@color/theme_dark</item>
+        <item name="colorOnPrimary">@color/theme_on</item>
+        <item name="colorSecondary">@color/theme_blue</item>
+        <item name="colorSecondaryVariant">@color/theme_dark</item>
+        <item name="colorOnSecondary">@color/theme_on</item>
+        <item name="android:windowBackground">@color/theme_light</item>
+        <item name="android:textColorPrimary">@color/theme_on</item>
+    </style>
+
+    <!-- Green Theme -->
+    <style name="Theme.TicTacToe.Green" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_green</item>
+        <item name="colorPrimaryVariant">@color/theme_dark</item>
+        <item name="colorOnPrimary">@color/theme_on</item>
+        <item name="colorSecondary">@color/theme_green</item>
+        <item name="colorSecondaryVariant">@color/theme_dark</item>
+        <item name="colorOnSecondary">@color/theme_on</item>
+        <item name="android:windowBackground">@color/theme_light</item>
+        <item name="android:textColorPrimary">@color/theme_on</item>
+    </style>
+
+    <!-- Red Theme -->
+    <style name="Theme.TicTacToe.Red" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_red</item>
+        <item name="colorPrimaryVariant">@color/theme_dark</item>
+        <item name="colorOnPrimary">@color/theme_on</item>
+        <item name="colorSecondary">@color/theme_red</item>
+        <item name="colorSecondaryVariant">@color/theme_dark</item>
+        <item name="colorOnSecondary">@color/theme_on</item>
+        <item name="android:windowBackground">@color/theme_light</item>
+        <item name="android:textColorPrimary">@color/theme_on</item>
+    </style>
+
+    <!-- Gold Theme -->
+    <style name="Theme.TicTacToe.Gold" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_gold</item>
+        <item name="colorPrimaryVariant">@color/theme_dark</item>
+        <item name="colorOnPrimary">@color/theme_on_gold</item>
+        <item name="colorSecondary">@color/theme_gold</item>
+        <item name="colorSecondaryVariant">@color/theme_dark</item>
+        <item name="colorOnSecondary">@color/theme_on_gold</item>
+        <item name="android:windowBackground">@color/theme_light</item>
+        <item name="android:textColorPrimary">@color/theme_on_gold</item>
+    </style>
+
+    <!-- Silver Theme -->
+    <style name="Theme.TicTacToe.Silver" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/theme_silver</item>
+        <item name="colorPrimaryVariant">@color/theme_dark</item>
+        <item name="colorOnPrimary">@color/theme_on_silver</item>
+        <item name="colorSecondary">@color/theme_silver</item>
+        <item name="colorSecondaryVariant">@color/theme_dark</item>
+        <item name="colorOnSecondary">@color/theme_on_silver</item>
+        <item name="android:windowBackground">@color/theme_light</item>
+        <item name="android:textColorPrimary">@color/theme_on_silver</item>
+    </style>
+</resources>

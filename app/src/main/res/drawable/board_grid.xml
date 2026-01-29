@@ -1,0 +1,35 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Board background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#e0e0e0" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <!-- Vertical lines -->
+    <item android:left="120dp" android:right="120dp">
+        <shape android:shape="rectangle">
+            <size android:width="4dp" />
+            <solid android:color="#888888" />
+        </shape>
+    </item>
+    <item android:left="236dp" android:right="4dp">
+        <shape android:shape="rectangle">
+            <size android:width="4dp" />
+            <solid android:color="#888888" />
+        </shape>
+    </item>
+    <!-- Horizontal lines -->
+    <item android:top="120dp" android:bottom="120dp">
+        <shape android:shape="rectangle">
+            <size android:height="4dp" />
+            <solid android:color="#888888" />
+        </shape>
+    </item>
+    <item android:top="236dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <size android:height="4dp" />
+            <solid android:color="#888888" />
+        </shape>
+    </item>
+</layer-list>
