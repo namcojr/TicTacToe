@@ -44,11 +44,6 @@ class GameActivity : AppCompatActivity() {
         setListeners()
         updateTurnText()
         btnReset.setOnClickListener { resetGame() }
-        val btnMenu = findViewById<Button>(R.id.btnMenu)
-        btnMenu.setOnClickListener {
-            finish()
-            startActivity(android.content.Intent(this, MainMenuActivity::class.java))
-        }
     }
 
     private fun setBoardCardBackgrounds(theme: String) {

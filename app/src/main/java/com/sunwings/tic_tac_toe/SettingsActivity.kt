@@ -14,11 +14,6 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        // Removed btnSaveTheme, settings are now auto-saved
-        val btnMenu = findViewById<Button>(R.id.btnMenu)
-        btnMenu.setOnClickListener {
-            finish()
-        }
         val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val savedDifficulty = prefs.getString("ai_difficulty", "Easy")
 

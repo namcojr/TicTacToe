@@ -192,13 +192,7 @@
             android:text="Hard" />
     </RadioGroup>
 
-    <Button
-        android:id="@+id/btnMenu"
-        style="@style/TicTacToeActionButton"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="MENU"
-        android:layout_marginTop="16dp" />
+
 
 
     </LinearLayout>

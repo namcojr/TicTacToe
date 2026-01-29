@@ -19,13 +19,8 @@ class HighScoreActivity : AppCompatActivity() {
 
         layoutPlayerXScores = findViewById(R.id.layoutPlayerXScores)
         layoutPlayerOScores = findViewById(R.id.layoutPlayerOScores)
-        btnBackToMenu = findViewById(R.id.btnBackToMenu)
 
         displayScores()
-
-        btnBackToMenu.setOnClickListener {
-            finish()
-        }
     }
 
     private fun setThemeFromPrefs() {

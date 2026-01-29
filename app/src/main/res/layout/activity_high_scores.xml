@@ -51,12 +51,4 @@
         android:orientation="vertical"
         android:layout_marginBottom="32dp" />
 
-    <Button
-        android:id="@+id/btnBackToMenu"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Back to Menu"
-        android:textSize="18sp"
-        android:textColor="?android:textColorPrimary" />
-
 </LinearLayout>
