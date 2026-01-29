@@ -50,23 +50,23 @@
     <style name="Theme.TicTacToe.Gold" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_gold</item>
         <item name="colorPrimaryVariant">@color/theme_default</item>
-        <item name="colorOnPrimary">@color/theme_on</item>
+        <item name="colorOnPrimary">@color/theme_on_gold</item>
         <item name="colorSecondary">@color/theme_gold</item>
         <item name="colorSecondaryVariant">@color/theme_default</item>
-        <item name="colorOnSecondary">@color/theme_on</item>
+        <item name="colorOnSecondary">@color/theme_on_gold</item>
         <item name="android:windowBackground">@color/theme_dark</item>
-        <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="android:textColorPrimary">@color/theme_on_gold</item>
     </style>
 
     <!-- Silver Theme -->
     <style name="Theme.TicTacToe.Silver" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_silver</item>
         <item name="colorPrimaryVariant">@color/theme_default</item>
-        <item name="colorOnPrimary">@color/theme_on</item>
+        <item name="colorOnPrimary">@color/theme_on_silver</item>
         <item name="colorSecondary">@color/theme_silver</item>
         <item name="colorSecondaryVariant">@color/theme_default</item>
-        <item name="colorOnSecondary">@color/theme_on</item>
+        <item name="colorOnSecondary">@color/theme_on_silver</item>
         <item name="android:windowBackground">@color/theme_dark</item>
-        <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="android:textColorPrimary">@color/theme_on_silver</item>
     </style>
 </resources>

@@ -13,7 +13,7 @@
         android:text="Player X's Turn"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="?android:textColorPrimary"
+        android:textColor="@color/main_title_color"
         android:layout_marginTop="96dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

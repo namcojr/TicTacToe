@@ -25,12 +25,13 @@
         android:text="TIC-TAC-TOE"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="?android:textColorPrimary"
+        android:textColor="@color/main_title_color"
         android:layout_marginBottom="64dp"
         android:gravity="center" />
 
     <Button
         android:id="@+id/btnStartGame"
+        style="@style/TicTacToeActionButton"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Start New Game"
@@ -38,6 +39,7 @@
 
     <Button
         android:id="@+id/btnHighScores"
+        style="@style/TicTacToeActionButton"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="View High Scores"
@@ -45,6 +47,7 @@
 
     <Button
         android:id="@+id/btnSettings"
+        style="@style/TicTacToeActionButton"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Settings" />
