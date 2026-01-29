@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Checked: dark text for light bg, white for dark bg (handled by color resource) -->
+    <item android:color="@color/radio_text_light" android:state_checked="true"/>
+    <!-- Default: dark text for light theme, white for dark theme -->
+    <item android:color="@color/radio_text_light"/>
+</selector>

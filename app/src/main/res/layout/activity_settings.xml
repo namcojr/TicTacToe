@@ -175,7 +175,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        app:cardBackgroundColor="@android:color/white">
+        app:cardBackgroundColor="@color/settings_card_bg_light">
         <RadioGroup
             android:id="@+id/radioGroupGridSize"
             android:layout_width="match_parent"
@@ -189,14 +189,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Traditional 3x3" />
+                android:text="Traditional 3x3"
+                android:textColor="@color/radio_text_selector" />
             <RadioButton
                 android:id="@+id/radioGrid4x4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Difficult 4x4" />
+                android:text="Difficult 4x4"
+                android:textColor="@color/radio_text_selector" />
         </RadioGroup>
     </com.google.android.material.card.MaterialCardView>
 
@@ -218,7 +220,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
-        app:cardBackgroundColor="@android:color/white">
+        app:cardBackgroundColor="@color/settings_card_bg_light">
         <RadioGroup
             android:id="@+id/radioGroupDifficulty"
             android:layout_width="match_parent"
@@ -232,21 +234,24 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Easy" />
+                android:text="Easy"
+                android:textColor="@color/radio_text_selector" />
             <RadioButton
                 android:id="@+id/radioMedium"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Medium" />
+                android:text="Medium"
+                android:textColor="@color/radio_text_selector" />
             <RadioButton
                 android:id="@+id/radioHard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Hard" />
+                android:text="Hard"
+                android:textColor="@color/radio_text_selector" />
         </RadioGroup>
     </com.google.android.material.card.MaterialCardView>
 
