@@ -24,7 +24,8 @@
         app:columnCount="3">
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardDefault"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            app:layout_columnWeight="1"
             android:layout_height="80dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp"
@@ -45,7 +46,8 @@
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardBlue"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            app:layout_columnWeight="1"
             android:layout_height="80dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp"
@@ -66,7 +68,8 @@
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardGreen"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            app:layout_columnWeight="1"
             android:layout_height="80dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp"
@@ -87,7 +90,8 @@
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardRed"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            app:layout_columnWeight="1"
             android:layout_height="80dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp"
@@ -108,7 +112,8 @@
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardGold"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            app:layout_columnWeight="1"
             android:layout_height="80dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp"
@@ -129,7 +134,8 @@
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardSilver"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            app:layout_columnWeight="1"
             android:layout_height="80dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp"
