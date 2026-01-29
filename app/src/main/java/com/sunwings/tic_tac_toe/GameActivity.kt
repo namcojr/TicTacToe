@@ -21,6 +21,7 @@ class GameActivity : AppCompatActivity() {
     private var currentPlayer = 'X'
     private var gameActive = true
     private var boardState = Array(3) { CharArray(3) { ' ' } }
+    private var aiThinking = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setThemeFromPrefs()
@@ -94,29 +95,12 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun onCellClicked(row: Int, col: Int) {
-        if (!gameActive) return
+        // Ignore input when game not active or AI is thinking
+        if (!gameActive || aiThinking) return
+        // If cell occupied, ignore
         if (boardState[row][col] != ' ') return
-        boardState[row][col] = currentPlayer
-        val drawableRes = if (currentPlayer == 'X') R.drawable.ic_ttt_x else R.drawable.ic_ttt_o
-        board[row][col].setImageResource(drawableRes)
-        if (checkWin()) {
-            tvPlayerTurn.text = if (currentPlayer == 'X') "Human player wins" else "Computer wins!"
-            Toast.makeText(this, if (currentPlayer == 'X') "Human player wins" else "Computer wins!", Toast.LENGTH_SHORT).show()
-            saveWin(currentPlayer)
-            gameActive = false
-        } else if (isDraw()) {
-            tvPlayerTurn.text = "It's a draw!"
-            Toast.makeText(this, "It's a draw!", Toast.LENGTH_SHORT).show()
-            gameActive = false
-        } else {
-            currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
-            updateTurnText()
-            if (currentPlayer == 'O') {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    aiMove()
-                }, 600)
-            }
-        }
+        // Apply human move
+        applyMove(row, col, 'X', fromAi = false)
     }
 
     // AI move logic based on selected difficulty
@@ -129,8 +113,57 @@ class GameActivity : AppCompatActivity() {
             else -> getRandomMove()
         }
         if (move != null) {
-            onCellClicked(move.first, move.second)
+            applyMove(move.first, move.second, 'O', fromAi = true)
         }
+    }
+
+    // Centralized move application to avoid recursive checks and allow AI moves
+    private fun applyMove(row: Int, col: Int, player: Char, fromAi: Boolean) {
+        if (!gameActive) return
+        if (boardState[row][col] != ' ') return
+        boardState[row][col] = player
+        val drawableRes = if (player == 'X') R.drawable.ic_ttt_x else R.drawable.ic_ttt_o
+        board[row][col].setImageResource(drawableRes)
+        board[row][col].setColorFilter(obtainContrastColor())
+
+        if (checkWinFor(player)) {
+            tvPlayerTurn.text = if (player == 'X') "Human player wins" else "Computer wins!"
+            Toast.makeText(this, if (player == 'X') "Human player wins" else "Computer wins!", Toast.LENGTH_SHORT).show()
+            saveWin(player)
+            gameActive = false
+            return
+        }
+        if (isDraw()) {
+            tvPlayerTurn.text = "It's a draw!"
+            Toast.makeText(this, "It's a draw!", Toast.LENGTH_SHORT).show()
+            gameActive = false
+            return
+        }
+
+        if (fromAi) {
+            // After AI move, switch back to human
+            currentPlayer = 'X'
+            updateTurnText()
+            return
+        }
+
+        // After human move, hand over to AI
+        currentPlayer = 'O'
+        updateTurnText()
+        aiThinking = true
+        Handler(Looper.getMainLooper()).postDelayed({
+            aiMove()
+            // keep aiThinking true until AI move completes; aiMove -> applyMove will switch player back
+            aiThinking = false
+        }, 1200)
+    }
+
+    private fun obtainContrastColor(): Int {
+        val attrs = intArrayOf(android.R.attr.textColorPrimary)
+        val ta = theme.obtainStyledAttributes(attrs)
+        val color = ta.getColor(0, ContextCompat.getColor(this, android.R.color.white))
+        ta.recycle()
+        return color
     }
 
     // Easy: Random empty cell

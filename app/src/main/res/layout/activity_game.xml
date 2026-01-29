@@ -339,7 +339,7 @@
             android:id="@+id/btnReset"
             style="@style/TicTacToeActionButton"
             android:text="Restart"
-            android:textColor="@color/theme_on"
+            android:textColor="?android:textColorPrimary"
             android:layout_marginEnd="16dp"
             android:paddingLeft="24dp"
             android:paddingRight="24dp" />
@@ -347,7 +347,7 @@
             android:id="@+id/btnMenu"
             style="@style/TicTacToeActionButton"
             android:text="Menu"
-            android:textColor="@color/theme_on"
+            android:textColor="?android:textColorPrimary"
             android:paddingLeft="24dp"
             android:paddingRight="24dp" />
     </LinearLayout>

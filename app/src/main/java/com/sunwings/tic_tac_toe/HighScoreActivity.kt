@@ -50,15 +50,25 @@ class HighScoreActivity : AppCompatActivity() {
 
         for ((i, score) in xScores.withIndex()) {
             val tv = TextView(this)
-            tv.text = "${i + 1}. $score wins"
+            tv.text = "${ordinal(i + 1)}: $score wins"
             tv.textSize = 18f
             layoutPlayerXScores.addView(tv)
         }
         for ((i, score) in oScores.withIndex()) {
             val tv = TextView(this)
-            tv.text = "${i + 1}. $score wins"
+            tv.text = "${ordinal(i + 1)}: $score wins"
             tv.textSize = 18f
             layoutPlayerOScores.addView(tv)
+        }
+    }
+
+    private fun ordinal(n: Int): String {
+        return when {
+            n % 100 in 11..13 -> "${n}th"
+            n % 10 == 1 -> "${n}st"
+            n % 10 == 2 -> "${n}nd"
+            n % 10 == 3 -> "${n}rd"
+            else -> "${n}th"
         }
     }
 }

@@ -9,19 +9,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-<!-- Theme colors for TicTacToe -->
-<color name="theme_default">#2196F3</color> <!-- Default blue -->
-<color name="theme_dark">#1565C0</color>
-<color name="theme_light">#E3F2FD</color>
-<color name="theme_on">#FFFFFFFF</color>
-
-<color name="theme_blue">#2196F3</color>
-<color name="theme_green">#43A047</color>
-<color name="theme_red">#E53935</color>
-<color name="theme_gold">#FFD700</color>
-<color name="theme_silver">#C0C0C0</color>
-
-<!-- Contrast text for light themes -->
+<!-- Contrast text for light themes (used by themes.xml) -->
 <color name="theme_on_gold">#FF000000</color> <!-- black text for gold -->
 <color name="theme_on_silver">#FF000000</color> <!-- black text for silver -->
 </resources>
