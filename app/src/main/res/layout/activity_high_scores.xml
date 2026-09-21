@@ -3,52 +3,73 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:background="?android:windowBackground"
-    android:padding="24dp">
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="40dp"
+    android:paddingBottom="24dp">
 
     <TextView
         android:id="@+id/tvHighScoresTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="High Scores"
-        android:textSize="28sp"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/high_scores"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@color/main_title_color"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginBottom="4dp" />
+
+    <View
+        android:layout_width="56dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:background="?attr/colorPrimary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layoutScores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
     <TextView
-        android:id="@+id/tvPlayerXTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Human Players Top 5"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/main_title_color"
-        android:layout_marginBottom="8dp" />
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/no_scores_yet"
+        android:textSize="18sp"
+        android:textColor="@color/main_title_color" />
 
     <LinearLayout
-        android:id="@+id/layoutPlayerXScores"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="24dp" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
-    <TextView
-        android:id="@+id/tvPlayerOTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Computer Players Top 5"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/main_title_color"
-        android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/btnClearScores"
+            style="@style/TicTacToeActionButton"
+            android:layout_width="wrap_content"
+            android:text="@string/clear_scores"
+            android:layout_marginEnd="12dp" />
 
-    <LinearLayout
-        android:id="@+id/layoutPlayerOScores"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="32dp" />
-
+        <Button
+            android:id="@+id/btnBackToMenu"
+            style="@style/TicTacToeActionButton"
+            android:layout_width="wrap_content"
+            android:text="@string/back_to_menu" />
+    </LinearLayout>
 </LinearLayout>

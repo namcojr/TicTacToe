@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Distinct, high-contrast colours so X and O never look alike -->
+    <color name="piece_x">#2962FF</color>
+    <color name="piece_o">#FF5252</color>
+
+    <!-- Winning line highlight -->
+    <color name="win_highlight">#66FFC107</color>
+    <color name="win_highlight_strong">#FFFFC107</color>
+
+    <!-- Score / streak banner -->
+    <color name="banner_bg">#1F000000</color>
+    <color name="banner_text">#FF000000</color>
+
+    <!-- Leaderboard -->
+    <color name="score_card_bg">#FFFFFFFF</color>
+    <color name="score_text">#FF1A1A1A</color>
+    <color name="score_subtext">#FF666666</color>
+    <color name="medal_gold">#FFFFC107</color>
+    <color name="medal_silver">#FFB0BEC5</color>
+    <color name="medal_bronze">#FFCD7F32</color>
+    <color name="rank_plain">#FFE0E0E0</color>
+</resources>

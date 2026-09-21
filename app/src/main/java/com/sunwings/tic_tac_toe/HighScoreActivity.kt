@@ -1,24 +1,32 @@
 package com.sunwings.tic_tac_toe
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 
 class HighScoreActivity : AppCompatActivity() {
-    private lateinit var layoutPlayerXScores: LinearLayout
-    private lateinit var layoutPlayerOScores: LinearLayout
-    private lateinit var btnBackToMenu: Button
+    private lateinit var layoutScores: LinearLayout
+    private lateinit var tvEmpty: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setThemeFromPrefs()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_high_scores)
 
-        layoutPlayerXScores = findViewById(R.id.layoutPlayerXScores)
-        layoutPlayerOScores = findViewById(R.id.layoutPlayerOScores)
+        layoutScores = findViewById(R.id.layoutScores)
+        tvEmpty = findViewById(R.id.tvEmpty)
+
+        findViewById<Button>(R.id.btnBackToMenu).setOnClickListener { finish() }
+        findViewById<Button>(R.id.btnClearScores).setOnClickListener { confirmClear() }
 
         displayScores()
     }
@@ -35,36 +43,82 @@ class HighScoreActivity : AppCompatActivity() {
         }
     }
 
+    private fun confirmClear() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.clear_scores)
+            .setMessage("Remove all high scores?")
+            .setPositiveButton(R.string.clear_scores) { _, _ ->
+                ScoreStore.clear(this)
+                displayScores()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
     private fun displayScores() {
-        val prefs = getSharedPreferences("high_scores", Context.MODE_PRIVATE)
-        val xScores = prefs.getStringSet("player_x_scores", emptySet())!!.map { it.toInt() }.sortedDescending().take(5)
-        val oScores = prefs.getStringSet("player_o_scores", emptySet())!!.map { it.toInt() }.sortedDescending().take(5)
+        val entries = ScoreStore.getLeaderboard(this)
+        layoutScores.removeAllViews()
 
-        layoutPlayerXScores.removeAllViews()
-        layoutPlayerOScores.removeAllViews()
+        val highlightRank = intent.getIntExtra(EXTRA_HIGHLIGHT_RANK, -1)
 
-        // Display as "Human Player" and "Computer" scores
-        for ((i, score) in xScores.withIndex()) {
-            val tv = TextView(this)
-            tv.text = "${ordinal(i + 1)}: $score wins"
-            tv.textSize = 18f
-            layoutPlayerXScores.addView(tv)
+        if (entries.isEmpty()) {
+            layoutScores.visibility = LinearLayout.GONE
+            tvEmpty.visibility = TextView.VISIBLE
+            return
         }
-        for ((i, score) in oScores.withIndex()) {
-            val tv = TextView(this)
-            tv.text = "${ordinal(i + 1)}: $score wins"
-            tv.textSize = 18f
-            layoutPlayerOScores.addView(tv)
+
+        layoutScores.visibility = LinearLayout.VISIBLE
+        tvEmpty.visibility = TextView.GONE
+
+        val inflater = LayoutInflater.from(this)
+        entries.forEachIndexed { index, entry ->
+            val rank = index + 1
+            val row = inflater.inflate(R.layout.item_score, layoutScores, false)
+
+            val tvRank = row.findViewById<TextView>(R.id.tvRank)
+            tvRank.text = rank.toString()
+            tintRankBadge(tvRank, rank)
+
+            row.findViewById<TextView>(R.id.tvInitials).text = entry.initials
+            row.findViewById<TextView>(R.id.tvMeta).text = buildString {
+                append(entry.wins)
+                append(if (entry.wins == 1) " win" else " wins")
+                append(" · streak ")
+                append(entry.bestStreak)
+                append(" · ")
+                append(entry.difficulty)
+            }
+            row.findViewById<TextView>(R.id.tvScore).text = entry.score.toString()
+
+            if (rank == highlightRank) {
+                row.alpha = 0f
+                row.postDelayed({ row.animate().alpha(1f).setDuration(400).start() }, 100L)
+            }
+
+            layoutScores.addView(row)
         }
     }
 
-    private fun ordinal(n: Int): String {
-        return when {
-            n % 100 in 11..13 -> "${n}th"
-            n % 10 == 1 -> "${n}st"
-            n % 10 == 2 -> "${n}nd"
-            n % 10 == 3 -> "${n}rd"
-            else -> "${n}th"
+    /** Colours the rank badge gold/silver/bronze for the podium. */
+    private fun tintRankBadge(view: TextView, rank: Int) {
+        val bgColor = when (rank) {
+            1 -> ContextCompat.getColor(this, R.color.medal_gold)
+            2 -> ContextCompat.getColor(this, R.color.medal_silver)
+            3 -> ContextCompat.getColor(this, R.color.medal_bronze)
+            else -> ContextCompat.getColor(this, R.color.rank_plain)
         }
+        (view.background as? GradientDrawable)?.let {
+            it.mutate()
+            it.setColor(bgColor)
+        }
+        view.setTextColor(if (rank <= 3) Color.WHITE else Color.parseColor("#FF1A1A1A"))
+    }
+
+    companion object {
+        const val EXTRA_HIGHLIGHT_RANK = "highlight_rank"
+
+        fun intent(context: Context, highlightRank: Int = -1): Intent =
+            Intent(context, HighScoreActivity::class.java)
+                .putExtra(EXTRA_HIGHLIGHT_RANK, highlightRank)
     }
 }

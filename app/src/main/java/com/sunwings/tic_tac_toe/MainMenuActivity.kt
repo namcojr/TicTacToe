@@ -13,6 +13,7 @@ class MainMenuActivity : AppCompatActivity() {
 
 
     private var lastTheme: String? = null
+    private lateinit var sound: SoundManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setThemeFromPrefs()
@@ -21,22 +22,31 @@ class MainMenuActivity : AppCompatActivity() {
 
         val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
         lastTheme = prefs.getString("theme_color", "default")
+        sound = SoundManager(this)
 
         val btnStartGame = findViewById<Button>(R.id.btnStartGame)
         val btnHighScores = findViewById<Button>(R.id.btnHighScores)
         val btnSettings = findViewById<Button>(R.id.btnSettings)
 
         btnStartGame.setOnClickListener {
+            sound.play(SoundManager.Sound.TAP)
             startActivity(Intent(this, GameActivity::class.java))
         }
 
         btnHighScores.setOnClickListener {
+            sound.play(SoundManager.Sound.TAP)
             startActivity(Intent(this, HighScoreActivity::class.java))
         }
 
         btnSettings.setOnClickListener {
+            sound.play(SoundManager.Sound.TAP)
             startActivity(Intent(this, SettingsActivity::class.java))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sound.release()
     }
 
     override fun onResume() {

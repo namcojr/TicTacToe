@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_initials"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:id="@+id/etInitials"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_initials_input"
+        android:gravity="center"
+        android:padding="14dp"
+        android:letterSpacing="0.4"
+        android:textStyle="bold"
+        android:textSize="34sp"
+        android:textColor="?android:textColorPrimary"
+        android:inputType="textCapCharacters"
+        android:maxLength="3"
+        android:hint="AAA"
+        android:importantForAutofill="no"
+        android:autofillHints="" />
+</LinearLayout>

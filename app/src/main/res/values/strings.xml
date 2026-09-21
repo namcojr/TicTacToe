@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">Tic-Tac-Toe</string>
+
+    <!-- Game screen -->
+    <string name="your_turn">Your turn</string>
+    <string name="computer_turn">Computer is thinking…</string>
+    <string name="you_win">You win! 🎉</string>
+    <string name="computer_wins">Computer wins</string>
+    <string name="its_a_draw">It\'s a draw</string>
+    <string name="restart">Restart</string>
+    <string name="banner_score">Score %1$d</string>
+    <string name="banner_streak">Streak %1$d</string>
+    <string name="banner_best">Best %1$d</string>
+
+    <!-- High scores -->
+    <string name="high_scores">High Scores</string>
+    <string name="no_scores_yet">No scores yet.\nWin a few games to claim your spot!</string>
+    <string name="back_to_menu">Back to Menu</string>
+    <string name="clear_scores">Clear</string>
+
+    <!-- Initials dialog -->
+    <string name="new_high_score">New High Score!</string>
+    <string name="enter_initials">Enter your initials</string>
+    <string name="save">Save</string>
+
+    <!-- Settings -->
+    <string name="sound_effects">Sound Effects</string>
 </resources>

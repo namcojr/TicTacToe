@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Quick, pleasant fade+scale transition shared by every activity -->
+    <style name="Animation.TicTacToe" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_fade_out</item>
+    </style>
+
     <style name="Theme.TicTacToe" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_default</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <item name="fontFamily">@font/comfortaa</item>
         <item name="colorPrimaryVariant">@color/theme_dark</item>
         <item name="colorOnPrimary">@color/theme_on</item>
         <item name="colorSecondary">@color/theme_blue</item>
@@ -10,11 +20,14 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_light</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="android:windowAnimationStyle">@style/Animation.TicTacToe</item>
     </style>
 
     <!-- Blue Theme -->
     <style name="Theme.TicTacToe.Blue" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_blue</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <item name="fontFamily">@font/comfortaa</item>
         <item name="colorPrimaryVariant">@color/theme_dark</item>
         <item name="colorOnPrimary">@color/theme_on</item>
         <item name="colorSecondary">@color/theme_blue</item>
@@ -22,11 +35,14 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_light</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="android:windowAnimationStyle">@style/Animation.TicTacToe</item>
     </style>
 
     <!-- Green Theme -->
     <style name="Theme.TicTacToe.Green" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_green</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <item name="fontFamily">@font/comfortaa</item>
         <item name="colorPrimaryVariant">@color/theme_dark</item>
         <item name="colorOnPrimary">@color/theme_on</item>
         <item name="colorSecondary">@color/theme_green</item>
@@ -34,11 +50,14 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_light</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="android:windowAnimationStyle">@style/Animation.TicTacToe</item>
     </style>
 
     <!-- Red Theme -->
     <style name="Theme.TicTacToe.Red" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_red</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <item name="fontFamily">@font/comfortaa</item>
         <item name="colorPrimaryVariant">@color/theme_dark</item>
         <item name="colorOnPrimary">@color/theme_on</item>
         <item name="colorSecondary">@color/theme_red</item>
@@ -46,11 +65,14 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_light</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="android:windowAnimationStyle">@style/Animation.TicTacToe</item>
     </style>
 
     <!-- Gold Theme -->
     <style name="Theme.TicTacToe.Gold" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_gold</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <item name="fontFamily">@font/comfortaa</item>
         <item name="colorPrimaryVariant">@color/theme_dark</item>
         <item name="colorOnPrimary">@color/theme_on_gold</item>
         <item name="colorSecondary">@color/theme_gold</item>
@@ -58,11 +80,14 @@
         <item name="colorOnSecondary">@color/theme_on_gold</item>
         <item name="android:windowBackground">@color/theme_light</item>
         <item name="android:textColorPrimary">@color/theme_on_gold</item>
+        <item name="android:windowAnimationStyle">@style/Animation.TicTacToe</item>
     </style>
 
     <!-- Silver Theme -->
     <style name="Theme.TicTacToe.Silver" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/theme_silver</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <item name="fontFamily">@font/comfortaa</item>
         <item name="colorPrimaryVariant">@color/theme_dark</item>
         <item name="colorOnPrimary">@color/theme_on_silver</item>
         <item name="colorSecondary">@color/theme_silver</item>
@@ -70,5 +95,6 @@
         <item name="colorOnSecondary">@color/theme_on_silver</item>
         <item name="android:windowBackground">@color/theme_light</item>
         <item name="android:textColorPrimary">@color/theme_on_silver</item>
+        <item name="android:windowAnimationStyle">@style/Animation.TicTacToe</item>
     </style>
 </resources>

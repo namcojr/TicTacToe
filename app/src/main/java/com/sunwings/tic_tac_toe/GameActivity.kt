@@ -1,21 +1,32 @@
 package com.sunwings.tic_tac_toe
 
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.OvershootInterpolator
+import android.view.animation.ScaleAnimation
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Spinner
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.text.InputFilter
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
 class GameActivity : AppCompatActivity() {
     private lateinit var board: Array<Array<ImageView>>
     private lateinit var tvPlayerTurn: TextView
+    private lateinit var tvBanner: TextView
     private lateinit var btnReset: Button
     private var aiDifficulty: String = "Easy"
     private var gridSize: Int = 3
@@ -23,6 +34,18 @@ class GameActivity : AppCompatActivity() {
     private var gameActive = true
     private lateinit var boardState: Array<CharArray>
     private var aiThinking = false
+
+    private var gradientRes: Int = R.drawable.bg_gradient_default
+    private val handler = Handler(Looper.getMainLooper())
+    private var winningCells: List<Pair<Int, Int>> = emptyList()
+    private lateinit var ai: TicTacToeAi
+    private lateinit var sound: SoundManager
+
+    // Arcade "run" state: accumulates across games until the player loses.
+    private var sessionScore = 0
+    private var currentStreak = 0
+    private var sessionWins = 0
+    private var bestStreak = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setThemeFromPrefs()
@@ -37,9 +60,13 @@ class GameActivity : AppCompatActivity() {
         }
 
         tvPlayerTurn = findViewById(R.id.tvPlayerTurn)
+        tvBanner = findViewById(R.id.tvBanner)
         btnReset = findViewById(R.id.btnReset)
         aiDifficulty = prefs.getString("ai_difficulty", "Easy") ?: "Easy"
+        ai = TicTacToeAi(aiDifficulty, gridSize)
+        sound = SoundManager(this)
         val theme = prefs.getString("theme_color", "default") ?: "default"
+        gradientRes = gradientForTheme(theme)
         board = Array(gridSize) { row ->
             Array(gridSize) { col ->
                 val cellId = resources.getIdentifier("btnCell${row}${col}", "id", packageName)
@@ -47,10 +74,11 @@ class GameActivity : AppCompatActivity() {
             }
         }
         boardState = Array(gridSize) { CharArray(gridSize) { ' ' } }
-        setBoardCardBackgrounds(theme)
+        setBoardCardBackgrounds()
         setListeners()
         updateGridVisibility()
         updateTurnText()
+        updateBanner()
         btnReset.setOnClickListener { resetGame() }
     }
 
@@ -71,22 +99,26 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun setBoardCardBackgrounds(theme: String) {
-        val gradientRes = when (theme) {
-            "blue" -> R.drawable.bg_gradient_blue
-            "green" -> R.drawable.bg_gradient_green
-            "red" -> R.drawable.bg_gradient_red
-            "gold" -> R.drawable.bg_gradient_gold
-            "silver" -> R.drawable.bg_gradient_silver
-            else -> R.drawable.bg_gradient_default
-        }
+    private fun gradientForTheme(theme: String): Int = when (theme) {
+        "blue" -> R.drawable.bg_gradient_blue
+        "green" -> R.drawable.bg_gradient_green
+        "red" -> R.drawable.bg_gradient_red
+        "gold" -> R.drawable.bg_gradient_gold
+        "silver" -> R.drawable.bg_gradient_silver
+        else -> R.drawable.bg_gradient_default
+    }
+
+    private fun setBoardCardBackgrounds() {
         for (row in 0 until gridSize) {
             for (col in 0 until gridSize) {
-                val bgId = resources.getIdentifier("boardBg${row}${col}", "id", packageName)
-                val bg = findViewById<android.widget.FrameLayout>(bgId)
-                bg?.setBackgroundResource(gradientRes)
+                cellBackground(row, col)?.setBackgroundResource(gradientRes)
             }
         }
+    }
+
+    private fun cellBackground(row: Int, col: Int): android.widget.FrameLayout? {
+        val bgId = resources.getIdentifier("boardBg${row}${col}", "id", packageName)
+        return findViewById(bgId)
     }
 
 
@@ -121,25 +153,7 @@ class GameActivity : AppCompatActivity() {
         applyMove(row, col, 'X', fromAi = false)
     }
 
-    // AI move logic based on selected difficulty
-    private fun aiMove() {
-        if (!gameActive) return
-        val move = when (aiDifficulty) {
-            "Easy" -> {
-                // 5% chance to play smart on Easy
-                if (gridSize == 3 && Math.random() < 0.05) getBestMove() else getRandomMove()
-            }
-            "Medium" -> getMediumMove()
-            "Hard" -> {
-                // 5% chance to make a random move on Hard (3x3 only)
-                if (gridSize == 3 && Math.random() < 0.05) getRandomMove() else getBestMove()
-            }
-            else -> getRandomMove()
-        }
-        if (move != null) {
-            applyMove(move.first, move.second, 'O', fromAi = true)
-        }
-    }
+    private fun cloneBoard(): Array<CharArray> = Array(gridSize) { r -> boardState[r].copyOf() }
 
     // Centralized move application to avoid recursive checks and allow AI moves
     private fun applyMove(row: Int, col: Int, player: Char, fromAi: Boolean) {
@@ -147,19 +161,22 @@ class GameActivity : AppCompatActivity() {
         if (boardState[row][col] != ' ') return
         boardState[row][col] = player
         val drawableRes = if (player == 'X') R.drawable.ic_ttt_x else R.drawable.ic_ttt_o
-        board[row][col].setImageResource(drawableRes)
-        board[row][col].setColorFilter(obtainContrastColor())
+        val cell = board[row][col]
+        cell.setImageResource(drawableRes)
+        cell.setColorFilter(pieceColor(player))
+        animatePlace(cell)
+        cell.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        sound.play(if (player == 'X') SoundManager.Sound.PLACE else SoundManager.Sound.AI)
 
-        if (checkWinFor(player)) {
-            tvPlayerTurn.text = if (player == 'X') "Human player wins" else "Computer wins!"
-            Toast.makeText(this, if (player == 'X') "Human player wins" else "Computer wins!", Toast.LENGTH_SHORT).show()
-            saveWin(player)
-            gameActive = false
+        val line = findWinningLine(player)
+        if (line != null) {
+            if (player == 'X') onHumanWin(line) else onComputerWin(line)
             return
         }
         if (isDraw()) {
-            tvPlayerTurn.text = "It's a draw!"
-            Toast.makeText(this, "It's a draw!", Toast.LENGTH_SHORT).show()
+            tvPlayerTurn.text = getString(R.string.its_a_draw)
+            Toast.makeText(this, getString(R.string.its_a_draw), Toast.LENGTH_SHORT).show()
+            sound.play(SoundManager.Sound.DRAW)
             gameActive = false
             return
         }
@@ -171,142 +188,152 @@ class GameActivity : AppCompatActivity() {
             return
         }
 
-        // After human move, hand over to AI
+        // After human move, hand over to the AI (which "thinks" for a human-like moment)
         currentPlayer = 'O'
         updateTurnText()
         aiThinking = true
-        Handler(Looper.getMainLooper()).postDelayed({
-            aiMove()
-            // keep aiThinking true until AI move completes; aiMove -> applyMove will switch player back
+        startThinkingIndicator()
+        val decision = ai.decide(cloneBoard())
+        val delay = decision?.thinkMs ?: 500L
+        handler.postDelayed({
+            stopThinkingIndicator()
+            if (decision != null && gameActive) {
+                applyMove(decision.row, decision.col, 'O', fromAi = true)
+            }
             aiThinking = false
-        }, 1200)
+        }, delay)
     }
 
-    private fun obtainContrastColor(): Int {
-        val attrs = intArrayOf(android.R.attr.textColorPrimary)
-        val ta = theme.obtainStyledAttributes(attrs)
-        val color = ta.getColor(0, ContextCompat.getColor(this, android.R.color.white))
-        ta.recycle()
-        return color
+    private fun onHumanWin(line: List<Pair<Int, Int>>) {
+        gameActive = false
+        currentStreak++
+        sessionWins++
+        bestStreak = maxOf(bestStreak, currentStreak)
+        sessionScore += ScoreStore.pointsForWin(aiDifficulty, gridSize, currentStreak)
+        updateBanner()
+        highlightWin(line)
+        tvPlayerTurn.text = getString(R.string.you_win)
+        window.decorView.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+        sound.play(SoundManager.Sound.WIN)
+        Toast.makeText(this, getString(R.string.you_win), Toast.LENGTH_SHORT).show()
     }
 
-    // Easy: Random empty cell
-    private fun getRandomMove(): Pair<Int, Int>? {
-        val empty = mutableListOf<Pair<Int, Int>>()
-        for (row in 0 until gridSize) for (col in 0 until gridSize) if (boardState[row][col] == ' ') empty.add(Pair(row, col))
-        return if (empty.isNotEmpty()) empty.random() else null
+    private fun onComputerWin(line: List<Pair<Int, Int>>) {
+        gameActive = false
+        highlightWin(line)
+        tvPlayerTurn.text = getString(R.string.computer_wins)
+        window.decorView.performHapticFeedback(HapticFeedbackConstants.REJECT)
+        sound.play(SoundManager.Sound.LOSE)
+        Toast.makeText(this, getString(R.string.computer_wins), Toast.LENGTH_SHORT).show()
+        endRun()
     }
 
-    // Medium: Win if possible, block if needed, else random
-    private fun getMediumMove(): Pair<Int, Int>? {
-        // Try to win
-        for (row in 0 until gridSize) for (col in 0 until gridSize) {
-            if (boardState[row][col] == ' ') {
-                boardState[row][col] = 'O'
-                if (checkWinFor('O')) { boardState[row][col] = ' '; return Pair(row, col) }
-                boardState[row][col] = ' '
-            }
-        }
-        // Try to block X
-        for (row in 0 until gridSize) for (col in 0 until gridSize) {
-            if (boardState[row][col] == ' ') {
-                boardState[row][col] = 'X'
-                if (checkWinFor('X')) { boardState[row][col] = ' '; return Pair(row, col) }
-                boardState[row][col] = ' '
-            }
-        }
-        // Else random
-        return getRandomMove()
-    }
-
-    // Hard: Minimax (unforgiving)
-    private fun getBestMove(): Pair<Int, Int>? {
-        var bestScore = Int.MIN_VALUE
-        var move: Pair<Int, Int>? = null
-        val maxDepth = if (gridSize == 4) 5 else Int.MAX_VALUE // Limit depth for 4x4, unlimited for 3x3
-        for (row in 0 until gridSize) for (col in 0 until gridSize) {
-            if (boardState[row][col] == ' ') {
-                boardState[row][col] = 'O'
-                val score = minimax(0, false, maxDepth)
-                boardState[row][col] = ' '
-                if (score > bestScore) {
-                    bestScore = score
-                    move = Pair(row, col)
-                }
-            }
-        }
-        return move
-    }
-
-    // Minimax algorithm for hard AI
-    private fun minimax(depth: Int, isMax: Boolean, maxDepth: Int): Int {
-        if (checkWinFor('O')) return 10 - depth
-        if (checkWinFor('X')) return depth - 10
-        if (isDraw()) return 0
-        if (depth >= maxDepth) return 0 // Depth limit reached, treat as draw/neutral
-        if (isMax) {
-            var best = Int.MIN_VALUE
-            for (row in 0 until gridSize) for (col in 0 until gridSize) {
-                if (boardState[row][col] == ' ') {
-                    boardState[row][col] = 'O'
-                    best = maxOf(best, minimax(depth + 1, false, maxDepth))
-                    boardState[row][col] = ' '
-                }
-            }
-            return best
-        } else {
-            var best = Int.MAX_VALUE
-            for (row in 0 until gridSize) for (col in 0 until gridSize) {
-                if (boardState[row][col] == ' ') {
-                    boardState[row][col] = 'X'
-                    best = minOf(best, minimax(depth + 1, true, maxDepth))
-                    boardState[row][col] = ' '
-                }
-            }
-            return best
+    /** The run is over. Offer to record it if it made the leaderboard, then reset. */
+    private fun endRun() {
+        val score = sessionScore
+        val wins = sessionWins
+        val streak = bestStreak
+        val difficulty = aiDifficulty
+        val qualifies = ScoreStore.qualifies(this, score)
+        resetSession()
+        if (qualifies) {
+            promptForInitials(score, wins, streak, difficulty)
         }
     }
 
-    // Helper to check win for a specific player
-    private fun checkWinFor(player: Char): Boolean {
-        // Check rows and columns
+    private fun promptForInitials(score: Int, wins: Int, streak: Int, difficulty: String) {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_initials, null)
+        val et = view.findViewById<EditText>(R.id.etInitials)
+        et.filters = arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(3))
+        et.setText(lastInitials())
+        et.setSelection(et.text.length)
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.new_high_score) + "  •  $score pts")
+            .setView(view)
+            .setCancelable(false)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val initials = ScoreStore.sanitizeInitials(et.text.toString())
+                saveLastInitials(initials)
+                val rank = ScoreStore.submit(
+                    this,
+                    ScoreEntry(initials, score, wins, streak, difficulty, System.currentTimeMillis())
+                )
+                startActivity(HighScoreActivity.intent(this, rank))
+            }
+            .show()
+    }
+
+    private fun pieceColor(player: Char): Int =
+        ContextCompat.getColor(this, if (player == 'X') R.color.piece_x else R.color.piece_o)
+
+    /** Returns the coordinates of the winning line for [player], or null if there is none. */
+    private fun findWinningLine(player: Char): List<Pair<Int, Int>>? {
+        // Rows and columns
         for (i in 0 until gridSize) {
-            var rowWin = true
-            var colWin = true
-            for (j in 0 until gridSize) {
-                if (boardState[i][j] != player) rowWin = false
-                if (boardState[j][i] != player) colWin = false
+            if ((0 until gridSize).all { boardState[i][it] == player }) {
+                return (0 until gridSize).map { Pair(i, it) }
             }
-            if (rowWin || colWin) return true
+            if ((0 until gridSize).all { boardState[it][i] == player }) {
+                return (0 until gridSize).map { Pair(it, i) }
+            }
         }
-        // Check diagonals
-        var diag1Win = true
-        var diag2Win = true
-        for (i in 0 until gridSize) {
-            if (boardState[i][i] != player) diag1Win = false
-            if (boardState[i][gridSize - 1 - i] != player) diag2Win = false
+        // Diagonals
+        if ((0 until gridSize).all { boardState[it][it] == player }) {
+            return (0 until gridSize).map { Pair(it, it) }
         }
-        return diag1Win || diag2Win
-    }
-
-    // Save win to SharedPreferences for high score tracking
-    private fun saveWin(player: Char) {
-        val prefs = getSharedPreferences("high_scores", MODE_PRIVATE)
-        val key = if (player == 'X') "player_x_scores" else "player_o_scores"
-        val scores = prefs.getStringSet(key, mutableSetOf())?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
-        val newScore = (scores.firstOrNull() ?: 0) + 1
-        scores.add(0, newScore)
-        val top5 = scores.sortedDescending().take(5).map { it.toString() }.toSet()
-        prefs.edit().putStringSet(key, top5).apply()
+        if ((0 until gridSize).all { boardState[it][gridSize - 1 - it] == player }) {
+            return (0 until gridSize).map { Pair(it, gridSize - 1 - it) }
+        }
+        return null
     }
 
     private fun updateTurnText() {
-        val playerText = if (currentPlayer == 'X') "Human Player" else "Computer"
-        tvPlayerTurn.text = "$playerText's Turn"
+        tvPlayerTurn.text =
+            if (currentPlayer == 'X') getString(R.string.your_turn) else getString(R.string.computer_turn)
     }
 
-    private fun checkWin(): Boolean {
-        return checkWinFor(currentPlayer)
+    /** Gentle scale + fade pulse on the turn label while the AI "thinks". */
+    private fun startThinkingIndicator() {
+        val set = AnimationSet(true).apply {
+            interpolator = AccelerateDecelerateInterpolator()
+            addAnimation(AlphaAnimation(1f, 0.45f).apply {
+                duration = 560
+                repeatCount = Animation.INFINITE
+                repeatMode = Animation.REVERSE
+            })
+            addAnimation(
+                ScaleAnimation(
+                    1f, 1.08f, 1f, 1.08f,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f
+                ).apply {
+                    duration = 560
+                    repeatCount = Animation.INFINITE
+                    repeatMode = Animation.REVERSE
+                }
+            )
+        }
+        tvPlayerTurn.startAnimation(set)
+    }
+
+    private fun stopThinkingIndicator() {
+        tvPlayerTurn.clearAnimation()
+        tvPlayerTurn.alpha = 1f
+    }
+
+    private fun updateBanner() {
+        tvBanner.text = getString(R.string.banner_score, sessionScore) +
+            "   ·   " + getString(R.string.banner_streak, currentStreak) +
+            "   ·   " + getString(R.string.banner_best, bestStreak)
+    }
+
+    private fun resetSession() {
+        sessionScore = 0
+        currentStreak = 0
+        sessionWins = 0
+        bestStreak = 0
+        updateBanner()
     }
 
     private fun isDraw(): Boolean {
@@ -318,15 +345,88 @@ class GameActivity : AppCompatActivity() {
         return true
     }
 
+    // ---- Animations -------------------------------------------------------
+
+    private fun animatePlace(view: View) {
+        view.clearAnimation()
+        view.scaleX = 0.3f
+        view.scaleY = 0.3f
+        view.alpha = 0.3f
+        view.animate()
+            .scaleX(1f).scaleY(1f).alpha(1f)
+            .setInterpolator(OvershootInterpolator())
+            .setDuration(220)
+            .start()
+    }
+
+    private fun highlightWin(line: List<Pair<Int, Int>>) {
+        winningCells = line
+        for ((row, col) in line) {
+            cellBackground(row, col)?.setBackgroundResource(R.drawable.bg_cell_win)
+            val pulse = ScaleAnimation(
+                1f, 1.15f, 1f, 1.15f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
+            ).apply {
+                duration = 420
+                repeatCount = Animation.INFINITE
+                repeatMode = Animation.REVERSE
+            }
+            board[row][col].startAnimation(pulse)
+        }
+    }
+
+    private fun clearWinHighlight() {
+        for ((row, col) in winningCells) {
+            board[row][col].clearAnimation()
+            cellBackground(row, col)?.setBackgroundResource(gradientRes)
+        }
+        winningCells = emptyList()
+    }
+
     private fun resetGame() {
+        sound.play(SoundManager.Sound.TAP)
+        handler.removeCallbacksAndMessages(null)
+        aiThinking = false
+        stopThinkingIndicator()
+        clearWinHighlight()
         for (row in 0 until gridSize) {
             for (col in 0 until gridSize) {
                 boardState[row][col] = ' '
+                board[row][col].clearAnimation()
                 board[row][col].setImageDrawable(null)
             }
         }
         currentPlayer = 'X'
         gameActive = true
         updateTurnText()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Safety net: record a strong ongoing run if the player is leaving for good.
+        if (isFinishing && sessionScore > 0 && ScoreStore.qualifies(this, sessionScore)) {
+            ScoreStore.submit(
+                this,
+                ScoreEntry(lastInitials(), sessionScore, sessionWins, bestStreak, aiDifficulty, System.currentTimeMillis())
+            )
+            resetSession()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+        sound.release()
+    }
+
+    private fun lastInitials(): String {
+        val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        return prefs.getString("last_initials", "AAA") ?: "AAA"
+    }
+
+    private fun saveLastInitials(initials: String) {
+        getSharedPreferences("settings", Context.MODE_PRIVATE)
+            .edit().putString("last_initials", initials).apply()
     }
 }

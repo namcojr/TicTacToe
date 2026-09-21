@@ -76,6 +76,14 @@ class SettingsActivity : AppCompatActivity() {
             }
             prefs.edit().putString("grid_size", gridSize).apply()
         }
+
+        // Sound effects toggle
+        val switchSound =
+            findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.switchSound)
+        switchSound.isChecked = prefs.getBoolean("sound_enabled", true)
+        switchSound.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("sound_enabled", isChecked).apply()
+        }
     }
 
     private fun setThemeFromPrefs() {
