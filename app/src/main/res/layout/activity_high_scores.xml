@@ -52,24 +52,13 @@
         android:textSize="18sp"
         android:textColor="@color/main_title_color" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btnClearScores"
-            style="@style/TicTacToeActionButton"
-            android:layout_width="wrap_content"
-            android:text="@string/clear_scores"
-            android:layout_marginEnd="12dp" />
-
-        <Button
-            android:id="@+id/btnBackToMenu"
-            style="@style/TicTacToeActionButton"
-            android:layout_width="wrap_content"
-            android:text="@string/back_to_menu" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnClearScores"
+        style="@style/TicTacToeActionButton"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/clear_scores" />
 </LinearLayout>

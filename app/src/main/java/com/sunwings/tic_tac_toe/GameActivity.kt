@@ -28,6 +28,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var tvPlayerTurn: TextView
     private lateinit var tvBanner: TextView
     private lateinit var btnReset: Button
+    private lateinit var btnQuit: Button
     private var aiDifficulty: String = "Easy"
     private var gridSize: Int = 3
     private var currentPlayer = 'X'
@@ -62,6 +63,7 @@ class GameActivity : AppCompatActivity() {
         tvPlayerTurn = findViewById(R.id.tvPlayerTurn)
         tvBanner = findViewById(R.id.tvBanner)
         btnReset = findViewById(R.id.btnReset)
+        btnQuit = findViewById(R.id.btnQuit)
         aiDifficulty = prefs.getString("ai_difficulty", "Easy") ?: "Easy"
         ai = TicTacToeAi(aiDifficulty, gridSize)
         sound = SoundManager(this)
@@ -80,6 +82,7 @@ class GameActivity : AppCompatActivity() {
         updateTurnText()
         updateBanner()
         btnReset.setOnClickListener { resetGame() }
+        btnQuit.setOnClickListener { quitRun() }
     }
 
     /**
@@ -178,6 +181,7 @@ class GameActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.its_a_draw), Toast.LENGTH_SHORT).show()
             sound.play(SoundManager.Sound.DRAW)
             gameActive = false
+            btnQuit.visibility = View.VISIBLE
             return
         }
 
@@ -206,6 +210,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun onHumanWin(line: List<Pair<Int, Int>>) {
         gameActive = false
+        btnQuit.visibility = View.VISIBLE
         currentStreak++
         sessionWins++
         bestStreak = maxOf(bestStreak, currentStreak)
@@ -220,6 +225,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun onComputerWin(line: List<Pair<Int, Int>>) {
         gameActive = false
+        btnQuit.visibility = View.VISIBLE
         highlightWin(line)
         tvPlayerTurn.text = getString(R.string.computer_wins)
         window.decorView.performHapticFeedback(HapticFeedbackConstants.REJECT)
@@ -241,7 +247,29 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun promptForInitials(score: Int, wins: Int, streak: Int, difficulty: String) {
+    /** Player chose to stop: record the run if it made the leaderboard, then leave the game. */
+    private fun quitRun() {
+        sound.play(SoundManager.Sound.TAP)
+        val score = sessionScore
+        val wins = sessionWins
+        val streak = bestStreak
+        val difficulty = aiDifficulty
+        val qualifies = score > 0 && ScoreStore.qualifies(this, score)
+        resetSession()
+        if (qualifies) {
+            promptForInitials(score, wins, streak, difficulty, finishAfter = true)
+        } else {
+            finish()
+        }
+    }
+
+    private fun promptForInitials(
+        score: Int,
+        wins: Int,
+        streak: Int,
+        difficulty: String,
+        finishAfter: Boolean = false
+    ) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_initials, null)
         val et = view.findViewById<EditText>(R.id.etInitials)
         et.filters = arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(3))
@@ -260,6 +288,7 @@ class GameActivity : AppCompatActivity() {
                     ScoreEntry(initials, score, wins, streak, difficulty, System.currentTimeMillis())
                 )
                 startActivity(HighScoreActivity.intent(this, rank))
+                if (finishAfter) finish()
             }
             .show()
     }
@@ -399,6 +428,7 @@ class GameActivity : AppCompatActivity() {
         }
         currentPlayer = 'X'
         gameActive = true
+        btnQuit.visibility = View.GONE
         updateTurnText()
     }
 

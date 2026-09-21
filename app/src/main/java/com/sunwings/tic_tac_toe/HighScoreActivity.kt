@@ -25,7 +25,6 @@ class HighScoreActivity : AppCompatActivity() {
         layoutScores = findViewById(R.id.layoutScores)
         tvEmpty = findViewById(R.id.tvEmpty)
 
-        findViewById<Button>(R.id.btnBackToMenu).setOnClickListener { finish() }
         findViewById<Button>(R.id.btnClearScores).setOnClickListener { confirmClear() }
 
         displayScores()
@@ -47,7 +46,7 @@ class HighScoreActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.clear_scores)
             .setMessage("Remove all high scores?")
-            .setPositiveButton(R.string.clear_scores) { _, _ ->
+            .setPositiveButton(R.string.clear) { _, _ ->
                 ScoreStore.clear(this)
                 displayScores()
             }
