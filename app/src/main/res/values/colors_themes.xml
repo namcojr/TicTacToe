@@ -10,4 +10,7 @@
     <color name="theme_light">#FAFAFA</color>
     <!-- Main title should follow system light/dark mode: black in light, white in dark -->
     <color name="main_title_color">#FF000000</color>
+    <!-- Dialog text sits on the light/dark dialog surface, independent of the colour theme -->
+    <color name="dialog_text">#DE000000</color>
+    <color name="dialog_text_ghost">#42000000</color>
 </resources>

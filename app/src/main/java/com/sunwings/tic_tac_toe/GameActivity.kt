@@ -18,7 +18,13 @@ import android.widget.Button
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.graphics.Color
 import android.text.InputFilter
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.view.WindowManager
+import android.view.inputmethod.EditorInfo
+import androidx.core.widget.doAfterTextChanged
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -272,11 +278,27 @@ class GameActivity : AppCompatActivity() {
     ) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_initials, null)
         val et = view.findViewById<EditText>(R.id.etInitials)
+        val ghost = view.findViewById<TextView>(R.id.tvGhost)
         et.filters = arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(3))
-        et.setText(lastInitials())
-        et.setSelection(et.text.length)
 
-        AlertDialog.Builder(this)
+        // Ghost shows the typed letters invisibly followed by the untyped "A"s, so the
+        // remaining placeholders line up exactly after what the player has entered.
+        fun updateGhost(typed: CharSequence) {
+            ghost.text = SpannableString(typed.toString() + "AAA".drop(typed.length)).apply {
+                setSpan(ForegroundColorSpan(Color.TRANSPARENT), 0, typed.length, 0)
+            }
+        }
+        updateGhost("")
+        et.doAfterTextChanged { updateGhost(it ?: "") }
+
+        // Centre the "AAA" placeholder inside the box (both views are start-aligned)
+        et.post {
+            val pad = ((et.width - et.paint.measureText("AAA")) / 2).toInt().coerceAtLeast(0)
+            et.setPadding(pad, et.paddingTop, 0, et.paddingBottom)
+            ghost.setPadding(pad, ghost.paddingTop, 0, ghost.paddingBottom)
+        }
+
+        val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.new_high_score) + "  •  $score pts")
             .setView(view)
             .setCancelable(false)
@@ -290,7 +312,18 @@ class GameActivity : AppCompatActivity() {
                 startActivity(HighScoreActivity.intent(this, rank))
                 if (finishAfter) finish()
             }
-            .show()
+            .create()
+
+        et.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick()
+                true
+            } else false
+        }
+
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        dialog.show()
+        et.requestFocus()
     }
 
     private fun pieceColor(player: Char): Int =

@@ -22,4 +22,30 @@
         <item name="cornerRadius">12dp</item>
         <item name="elevation">4dp</item>
     </style>
+    <!-- Alert dialogs: the app themes set textColorPrimary to the "on primary" colour
+         (e.g. white), which is unreadable on the dialog surface. Reset text and button
+         colours to neutral values that follow light/dark mode. -->
+    <style name="ThemeOverlay.TicTacToe.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/dialog_text</item>
+        <item name="android:textColorSecondary">@color/dialog_text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/TicTacToeDialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/TicTacToeDialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/TicTacToeDialogButton</item>
+    </style>
+    <style name="TicTacToeDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/dialog_text</item>
+    </style>
+    <!-- Shared by the initials input and its ghost text so the letters line up exactly.
+         Text is start-aligned; GameActivity pads it so "AAA" sits centred. -->
+    <style name="InitialsText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:letterSpacing">0.4</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
 </resources>

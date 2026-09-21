@@ -10,6 +10,7 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_dark</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.TicTacToe.AlertDialog</item>
     </style>
 
     <!-- Blue Theme -->
@@ -24,6 +25,7 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_dark</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.TicTacToe.AlertDialog</item>
     </style>
 
     <!-- Green Theme -->
@@ -38,6 +40,7 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_dark</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.TicTacToe.AlertDialog</item>
     </style>
 
     <!-- Red Theme -->
@@ -52,6 +55,7 @@
         <item name="colorOnSecondary">@color/theme_on</item>
         <item name="android:windowBackground">@color/theme_dark</item>
         <item name="android:textColorPrimary">@color/theme_on</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.TicTacToe.AlertDialog</item>
     </style>
 
     <!-- Gold Theme -->
@@ -66,6 +70,7 @@
         <item name="colorOnSecondary">@color/theme_on_gold</item>
         <item name="android:windowBackground">@color/theme_dark</item>
         <item name="android:textColorPrimary">@color/theme_on_gold</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.TicTacToe.AlertDialog</item>
     </style>
 
     <!-- Silver Theme -->
@@ -80,5 +85,6 @@
         <item name="colorOnSecondary">@color/theme_on_silver</item>
         <item name="android:windowBackground">@color/theme_dark</item>
         <item name="android:textColorPrimary">@color/theme_on_silver</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.TicTacToe.AlertDialog</item>
     </style>
 </resources>
