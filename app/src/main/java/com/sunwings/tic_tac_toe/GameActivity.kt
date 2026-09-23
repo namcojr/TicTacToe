@@ -16,8 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Button
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
+import android.os.SystemClock
 import android.graphics.Color
 import android.text.InputFilter
 import android.text.SpannableString
@@ -28,6 +27,12 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GameActivity : AppCompatActivity() {
     private lateinit var board: Array<Array<ImageView>>
@@ -43,7 +48,7 @@ class GameActivity : AppCompatActivity() {
     private var aiThinking = false
 
     private var gradientRes: Int = R.drawable.bg_gradient_default
-    private val handler = Handler(Looper.getMainLooper())
+    private var aiJob: Job? = null
     private var winningCells: List<Pair<Int, Int>> = emptyList()
     private lateinit var ai: TicTacToeAi
     private lateinit var sound: SoundManager
@@ -203,15 +208,20 @@ class GameActivity : AppCompatActivity() {
         updateTurnText()
         aiThinking = true
         startThinkingIndicator()
-        val decision = ai.decide(cloneBoard())
-        val delay = decision?.thinkMs ?: 500L
-        handler.postDelayed({
+        val snapshot = cloneBoard()
+        // Search off the main thread so the player's move and the thinking indicator render
+        // immediately; the think time counts from now, so a slow search isn't added on top.
+        aiJob = lifecycleScope.launch {
+            val start = SystemClock.uptimeMillis()
+            val decision = withContext(Dispatchers.Default) { ai.decide(snapshot) }
+            val thinkMs = decision?.thinkMs ?: 500L
+            delay(thinkMs - (SystemClock.uptimeMillis() - start))
             stopThinkingIndicator()
             if (decision != null && gameActive) {
                 applyMove(decision.row, decision.col, 'O', fromAi = true)
             }
             aiThinking = false
-        }, delay)
+        }
     }
 
     private fun onHumanWin(line: List<Pair<Int, Int>>) {
@@ -448,7 +458,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun resetGame() {
         sound.play(SoundManager.Sound.TAP)
-        handler.removeCallbacksAndMessages(null)
+        aiJob?.cancel()
         aiThinking = false
         stopThinkingIndicator()
         clearWinHighlight()
@@ -479,7 +489,6 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
         sound.release()
     }
 
